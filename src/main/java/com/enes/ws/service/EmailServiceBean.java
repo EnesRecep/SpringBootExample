@@ -25,12 +25,14 @@ public class EmailServiceBean implements EmailService{
     
     @Override
     public Boolean send(Greeting greeting) {
+        
         logger.info("> send");
         
         Boolean success = Boolean.FALSE;
         
         
         // Simulate method executiıon time
+        //Artificial wait time
         long pause = 5000;
         try{
             Thread.sleep(pause);
