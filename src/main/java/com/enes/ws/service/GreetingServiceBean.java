@@ -7,84 +7,50 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.enes.ws.model.Greeting;
+import com.enes.ws.repository.GreetingRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class GreetingServiceBean implements GreetingService {
 
-	private static Long nextId;
-	private static Map<Long, Greeting> greetingMap;
-	
-	private static Greeting save(Greeting greeting) {
-		if(greetingMap == null) {
-			greetingMap = new HashMap<Long, Greeting>();
-			nextId = new Long(1);
-			
-		}
-		
-		
-		//if update
-		if(greeting.getId() != null) {
-			Greeting oldGreeting = greetingMap.get(greeting.getId());
-			if(oldGreeting == null) {
-				return null;
-			}
-			
-			greetingMap.remove(greeting.getId());
-			greetingMap.put(greeting.getId(), greeting);
-			return greeting;
-		}
-		
-		//if create
-		greeting.setId(nextId);
-		nextId = nextId + 1;
-		greetingMap.put(greeting.getId(), greeting);
-		return greeting;
-	}
-	
-	public static boolean remove(Long id) {
-		Greeting deletedGreeting = greetingMap.remove(id);
-		
-		if(deletedGreeting == null) {
-			return false;
-		}
-		
-		return true;
-	}
-	
-	static {
-		Greeting g1 = new Greeting();
-		g1.setText("Hello World!");
-		save(g1);
-		
-		Greeting g2 = new Greeting();
-		g2.setText("Holaaa!");
-		save(g2);
-		
-	}
-	
-	public Collection<Greeting> findAll() {
-		Collection<Greeting> greetings = greetingMap.values();
-		return greetings;
-	}
+    @Autowired
+    private GreetingRepository greetingRepository;
 
-	public Greeting findOne(Long id) {
-		Greeting greeting = greetingMap.get(id);
-		return greeting;
-	}
+    public Collection<Greeting> findAll() {
+        Collection<Greeting> greetings = greetingRepository.findAll();
+        
+        return greetings;
+    }
 
-	public Greeting create(Greeting greeting) {
-		Greeting savedGreeting = save(greeting);
-		return savedGreeting;
-	}
+    public Greeting findOne(Long id) {
+        Greeting greeting = greetingRepository.findOne(id);
+        return greeting;
+    }
 
-	public Greeting update(Greeting greeting) {
-		Greeting updatedGreeting = save(greeting);
-		return updatedGreeting;
-	}
+    public Greeting create(Greeting greeting) {
+        
+        if(greeting.getId() != null){
+            //Cannot create greeting with specified ID value 
+        }
+        Greeting savedGreeting = greetingRepository.save(greeting);
+        return savedGreeting;
+    }
 
-	public void delete(Long id) {
-		remove(id);
+    public Greeting update(Greeting greeting) {
+        Greeting greetingPersisted = findOne(greeting.getId());
+        if(greetingPersisted == null){
+            
+            //Cannot update greeting that hasnt been persisted
+            return null;
+        }
+        
+        Greeting updatedGreeting = greetingRepository.save(greeting);
+        return updatedGreeting;
+    }
 
-	}
+    public void delete(Long id) {
+        greetingRepository.delete(id);
+
+    }
 
 }
