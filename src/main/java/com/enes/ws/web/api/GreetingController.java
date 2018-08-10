@@ -99,6 +99,8 @@ public class GreetingController {
 
         return new ResponseEntity<Greeting>(HttpStatus.NO_CONTENT);
     }
+    
+    
     @RequestMapping(
             value = "/api/greetings/{id}/send",
             method = RequestMethod.POST,

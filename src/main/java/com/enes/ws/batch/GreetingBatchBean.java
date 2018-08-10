@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 ;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
  *
  * @author enes
  */
+@Profile("batch")
 @Component
 public class GreetingBatchBean {
 
@@ -28,7 +30,7 @@ public class GreetingBatchBean {
     private GreetingService greetingService;
 
     @Scheduled(
-            cron = "0,30 * * * * *")
+            cron = "${batch.greeting.cron}")
     public void cronJob() {
         logger.info("> cronjob");
         Collection<Greeting> greetings = greetingService.findAll();
